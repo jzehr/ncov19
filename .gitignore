@@ -1,14 +1,8 @@
-EPI_ISL_combined_02202020.fasta
+*.*.fasta
+*.*.json
 
-MERS_NCBI_results.fasta
-SARS_NCBI_results.fasta
+*.json
+*.fasta
 
-MERS_NCBI_results.json
-MERS_NCBI_results_errors.fasta
-MERS_SARS_nCOV19.fasta
+*.nwk
 
-
-SARS_NCBI_results.fasta
-SARS_NCBI_results.json
-
-SARS_NCBI_results_errors.fasta
