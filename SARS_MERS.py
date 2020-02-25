@@ -55,7 +55,7 @@ with open(out_json, "w") as j_out:
 with open(out_json, "r") as in_j:
     in_data = json.load(in_j)
 
-print("DONE GATHERING METADATA, WRITING {virus} INFORMATION TO FASTA FILE")
+print(f"DONE GATHERING METADATA, WRITING {virus} INFORMATION TO FASTA FILE")
 
 fasta = []
 for item, value in in_data.items():
@@ -81,7 +81,7 @@ for item, value in in_data.items():
     #print(header)
 
     seq = list(value["GBSeq_sequence"])
-    if len(seq) >= 20000 and len(seq) <=50000:
+    if len(seq) >= 20000 and len(seq) <=35000:
         seq = "".join(seq)
     else:
         seq = "error"
