@@ -5,3 +5,8 @@ NEED TO:
 make a conda environment to run this in
 
 ```python3 SARS_MERS.py -e [EMAIL] -v [VIRUS]```
+
+
+example: 
+
+```python3 SARS_MERS.py -e gmail@gmail.com -v SARS```
