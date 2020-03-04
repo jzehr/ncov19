@@ -46,8 +46,10 @@ snakemake data/fasta/SARS_S.fasta_protein_aligned.fas.hyphy.fas.GARD.json
 snakemake data/fasta/SARS_S.fasta_protein_aligned.fas.hyphy.fas.MEME.json
 ```
 Can run this locally:
+
 -- you can use a ```-j``` flag to denote the number of cores to run on.
 
 If you are on the server:
+
 -- try to use ```bpsh 2``` to send the process somewhere besides the head node
 
