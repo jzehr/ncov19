@@ -28,7 +28,6 @@ search_term = virus + " coronavirus complete genome"
 
 print(f"SEARCHING FOR {virus} ON NCBI\n")
 
-'''
 search = Entrez.esearch(db="nucleotide", retmax=10000, term=search_term, idtype="acc")
 records = Entrez.read(search)
 
@@ -37,9 +36,7 @@ print(f"FOUND {len(acc_nums)} {virus} GENOMES\n")
 
 
 print("SEARCHING FOR METADATA... BE PATIENT\n")
-'''
 
-'''
 data = {}
 for count, acc in enumerate(acc_nums):
     temp = {}
@@ -49,11 +46,10 @@ for count, acc in enumerate(acc_nums):
 
     data.update(temp)
     time.sleep(1)
-    print(f"Gathering item {count+1} out of {len(acc_nums)}")
+    print(f"Gathering genome {count+1} out of {len(acc_nums)}")
 
 with open(out_json, "w") as j_out:
     json.dump(data, j_out, indent=2)
-'''
 
 with open(out_json, "r") as in_j:
     in_data = json.load(in_j)
