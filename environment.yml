@@ -2,8 +2,9 @@ name: viran
 
 channels:
   - bioconda  
-  - defaults
+  - main
 dependencies:
+  - python=3.5
   - snakemake
   - biopython
     #- hyphy 
