@@ -27,7 +27,7 @@ unset PYTHONPATH
 pip3 install nested-lookup
 ```
 
-## Step 3: gather information
+## Step 3: gather information (only need to do this once!)
 ```
 python3 SARS_MERS.py -e [EMAIL] -v [VIRUS]
 
@@ -36,10 +36,18 @@ python3 SARS_MERS.py -e gmail@gmail.com -v SARS
 
 
 ## Step 4: Run the pipeline with snakemake
+### This is where things get fun
+-- If you want to ask about the recombination of the S protein in SARS
 ```
 snakemake data/fasta/SARS_S.fasta_protein_aligned.fas.hyphy.fas.GARD.json
 ```
+-- If you want to ask about the selection (using MEME) of the S protein in SARS
+```
+snakemake data/fasta/SARS_S.fasta_protein_aligned.fas.hyphy.fas.MEME.json
+```
+Can run this locally:
 -- you can use a ```-j``` flag to denote the number of cores to run on.
 
+If you are on the server:
 -- try to use ```bpsh 2``` to send the process somewhere besides the head node
 
