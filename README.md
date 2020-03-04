@@ -14,6 +14,7 @@ make -j MP
 
 ## Step 2: start conda
 ```
+cd ..
 conda env create -f environment.yml
 
 conda activate viran
