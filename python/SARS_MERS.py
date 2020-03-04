@@ -2,6 +2,7 @@ import argparse
 from Bio import Entrez
 import time
 import json
+import csv
 from collections import Counter
 
 
@@ -16,9 +17,9 @@ args = parser.parse_args()
 virus = args.virus
 email = args.email
 
-out_json = "%s/%s_NCBI_results.json" % (virus, virus)
-out_fasta = "%s/%s_NCBI_results.fasta" % (virus, virus)
-out_fasta_errors = "%s/%s_NCBI_results_errors.fasta" % (virus, virus)
+out_json = "data/jsons/%s_NCBI_results.json" % virus
+out_fasta = "data/fasta/%s_NCBI_results.fasta" % virus
+out_fasta_errors = "data/fasta/%s_NCBI_results_errors.fasta" %  virus
 
 
 Entrez.email = email
@@ -63,23 +64,40 @@ info = {}
 for key in keys:
     info.update(jde(key, in_data))
 
+
 good_info = {}
 error_info = {}
-for key, value in info.items():
-    if type(key) != tuple:
-        temp = {}
-        temp[key] = value
-        good_info.update(temp)
-    else:
-        temp = {}
-        temp[key[1]] = value
-        error_info.update(temp)
 
-good_outs = "%s/%s_good_info.json" % (virus, virus)
+## write master csv here ##
+# master row should contain all key information from good_info #
+virus_data_csv = "data/csvs/%s_info.cvs" %  virus
+with open(virus_data_csv, "w") as out_csv:
+    spamwriter = csv.writer(out_csv, delimiter="\t")
+    row_key = list(info.keys())[0]
+    v = list(info[row_key].keys())
+    row = ["ACC_NUM"] + v
+
+
+    spamwriter.writerow(row)
+
+    for key, value in info.items():
+        if type(key) != tuple:
+
+            temp = {}
+            temp[key] = value
+            spamwriter.writerow( [key] + list(list(temp.values())[0].values()))
+            good_info.update(temp)
+
+        else:
+            temp = {}
+            temp[key[1]] = value
+            error_info.update(temp)
+
+good_outs = "data/jsons/%s_good_info.json" % virus
 with open(good_outs, "w") as j_out:
     json.dump(good_info, j_out, indent=2)
 
-bad_outs = "%s/%s_bad_info.json" % (virus, virus)
+bad_outs = "data/jsons/%s_bad_info.json" % virus
 with open(bad_outs, "w") as j_out:
     json.dump(error_info, j_out, indent=2)
 print(f"DONE GATHERING METADATA, WRITING {virus} INFORMATION TO FASTA FILE")
@@ -98,10 +116,15 @@ for key in keys:
 
 new_genes = list(Counter([i for j in genes for i in j]))
 
+virus_gene_json = {virus : new_genes}
+vgj = "data/jsons/%s_genes.json" % virus
+with open(vgj, "w") as outer:
+    json.dump(virus_gene_json, outer, indent=2)
+
 for g in new_genes:
     ## write file here ##
-    virus_gene = "%s/%s_%s.fasta" % (virus, virus, g)
-    with open(virus_gene, "w") as out:
+    virus_gene_fasta = "data/fasta/%s_%s.fasta" % (virus, g)
+    with open(virus_gene_fasta, "w") as out:
         for key in keys:
             list_genes = meta_data[key]["genes"]
             list_index = meta_data[key]["indices"]
@@ -111,17 +134,7 @@ for g in new_genes:
                     results = fasta_writer(meta_data, key, index, g)
                     header, seq, row = results[0], results[1], results[2]
                     out.write(">{}\n{}\n".format(header, seq))
-## then open a file for each gene to write seqs to ##
 
 
 
-'''
-with open(out_fasta, "w") as out_f, open(out_fasta_errors, "w") as out_e:
-    for line in fasta:
-        if line[1] == "error":
-            out_e.write(">{}\n{}\n".format(line[0],line[1]))
-        else:
-            out_f.write(">{}\n{}\n".format(line[0],line[1]))
 
-print(f"ALL {virus} GENOMES WRITTEN TO FASTA FILE")
-'''

@@ -1,4 +1,5 @@
 import json
+#import nested_lookup
 from nested_lookup import nested_lookup
 from collections import Counter
 import re
@@ -154,7 +155,7 @@ def fasta_writer(meta, key, index, gene):
     acc_num = key
     nuc_seq = meta[key]["nuc_seq"]
     orf1_s = int(re.findall(r'\d+', index.split("..")[0])[0]) - 1
-    orf1_e = int(re.findall(r'\d+', index.split("..")[1])[0])
+    orf1_e = int(re.findall(r'\d+', index.split("..")[1])[0]) - 2
     date = []
     if meta[key]["collection_date"][0] == "no_value":
         date.append(("create", meta[key]["create_date"]))

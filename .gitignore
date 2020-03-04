@@ -1,3 +1,12 @@
+.snakemake/*
+
+data/fasta/*
+data/csvs/*
+data/jsons/*
+
+hyphy-analyses/*
+hyphy-develop/*
+
 *.*.fasta
 *.*.json
 
