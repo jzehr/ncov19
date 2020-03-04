@@ -25,14 +25,14 @@ conda activate viran
 ```
 unset PYTHONPATH
 
-pip3 install nested-lookup
+pip install nested-lookup
 ```
 
 ## Step 3: gather information (only need to do this once!)
 ```
-python3 SARS_MERS.py -e [EMAIL] -v [VIRUS]
+python python/SARS_MERS.py -e [EMAIL] -v [VIRUS]
 
-python3 SARS_MERS.py -e gmail@gmail.com -v SARS
+python python/SARS_MERS.py -e gmail@gmail.com -v SARS
 ```
 
 
