@@ -5,6 +5,11 @@ Anaconda3
 ## Step 1: Get hyphy-analyses
 ```
 git clone https://github.com/veg/hyphy-analyses.git
+git clone https://github.com/veg/hyphy.git hyphy-develop
+cd hyphy-develop
+git checkout develop
+cmake ./
+make -j MP
 ```
 
 ## Step 2: start conda
