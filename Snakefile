@@ -15,6 +15,11 @@ sars, mers = [i + "_"+ j for i, j in zip(s, sars_g_list)], [i + "_"+ j for i, j 
 
 total_files = sars + mers
 
+total_files.remove("SARS_ORF1AB")
+total_files.remove("SARS_PP1AB")
+total_files.remove("MERS_PP1AB")
+total_files.remove("MERS_ORF1AB")
+
 #print(total_files)
 
 
@@ -29,7 +34,7 @@ FEL_contrast = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/FEL-contr
 
 rule all:
   input:
-    expand("data/fasta/{vir_seq}.fasta_protein_aligned.fas", vir_seq=total_files)
+    expand("data/fasta/{vir_seq}.fasta_protein_aligned.fas.hyphy.fas.GARD.json", vir_seq=total_files)
 
 
 ####################################################################
@@ -58,7 +63,7 @@ rule mafft_rpf:
   output:
     out_prot = "data/fasta/{vir_seq}.fasta_protein_aligned.fas"
   shell:
-    "mafft --quiet {input.in_prot} > {output.out_prot}"
+    "mafft --quiet {input.in_prot} > {output.out_prot} 2> mafft_errors.log"
 
 ####################################################################
 # This rule will read in aligned PROTEIN file
@@ -85,3 +90,5 @@ rule rpf_GARD:
     out_nex = str(rules.rpf_post.output.out_f) + ".best-gard"
   shell:
    "hyphy {GARD} --alignment {input.in_f}"
+
+

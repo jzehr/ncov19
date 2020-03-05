@@ -1,5 +1,7 @@
 .snakemake/*
 
+mafft*
+
 errors*
 messages*
 
