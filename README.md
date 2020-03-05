@@ -6,11 +6,8 @@ Anaconda3
 ```
 git clone https://github.com/veg/hyphy-analyses.git
 git clone https://github.com/veg/hyphy.git hyphy-develop
-cd hyphy-develop
-git checkout develop
-cmake ./
-make -j MP
 ```
+### HYPHY will be installed using conda (hyphy v. 2.5.5)
 
 ## Step 2: start conda
 ```

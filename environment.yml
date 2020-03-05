@@ -7,6 +7,6 @@ dependencies:
   - python=3.6
   - snakemake
   - biopython
-    #- hyphy 
+  - hyphy 
     # cant find in conda
     #- nested-lookup

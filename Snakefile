@@ -20,7 +20,6 @@ total_files = sars + mers
 
 ### READY FOR PIPELINE ###
 
-#HYPHY = "hyphy-develop/hyphy LIBPATH=hyphy-develop/res"
 PRE = "hyphy-analyses/codon-msa/pre-msa.bf"
 POST = "hyphy-analyses/codon-msa/post-msa.bf"
 GARD = "hyphy-develop/res/TemplateBatchFiles/GARD.bf"
@@ -45,7 +44,7 @@ rule rpf_pre:
     out_prot = "data/fasta/{vir_seq}.fasta_protein.fas",
     out_nuc = "data/fasta/{vir_seq}.fasta_nuc.fas"
   shell:
-   "hyphy-develop/hyphy {PRE} --input {input.in_f} --E 0.05"
+   "hyphy {PRE} --input {input.in_f} --E 0.05"
 
 ####################################################################
 # This rule will read protein fas from previous rule and
@@ -72,7 +71,7 @@ rule rpf_post:
   output:
     out_f = "data/fasta/{vir_seq}.fasta_protein_aligned.fas.hyphy.fas"
   shell:
-   "hyphy-develop/hyphy {POST} --protein-msa {input.in_prot} --nucleotide-sequences {input.in_nuc} --output {output.out_f} --compress No"
+   "hyphy {POST} --protein-msa {input.in_prot} --nucleotide-sequences {input.in_nuc} --output {output.out_f} --compress No"
 
 ####################################################################
 # This rule will read in the post-hyphy fasta 
@@ -85,4 +84,4 @@ rule rpf_GARD:
     out_j = str(rules.rpf_post.output.out_f) + ".GARD.json",
     out_nex = str(rules.rpf_post.output.out_f) + ".best-gard"
   shell:
-   "hyphy-develop/hyphy {GARD} --alignment {input.in_f}"
+   "hyphy {GARD} --alignment {input.in_f}"

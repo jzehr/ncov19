@@ -1,5 +1,8 @@
 .snakemake/*
 
+errors*
+messages*
+
 data/fasta/*
 data/csvs/*
 data/jsons/*
