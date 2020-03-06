@@ -1,5 +1,5 @@
 import json
-
+import os
 
 SARS_gene_json = "data/jsons/SARS_genes.json"
 MERS_gene_json = "data/jsons/MERS_genes.json"
@@ -27,10 +27,15 @@ total_files.remove("MERS_ORF1AB")
 
 PRE = "hyphy-analyses/codon-msa/pre-msa.bf"
 POST = "hyphy-analyses/codon-msa/post-msa.bf"
+
 GARD = "hyphy-develop/res/TemplateBatchFiles/GARD.bf"
 MEME = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/MEME.bf"
-FEL_contrast = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/FEL-contrast.bf"
-
+#FEL_contrast = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/FEL-contrast.bf"
+FEL = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/FEL.bf"
+FUBAR = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/FUBAR.bf"
+SLAC = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/SLAC.bf"
+FMM = "hyphy-analyses/FitMultiModel/FitMultiModel.bf"
+BUSTED = "hyphy-develop/res/TemplateBatchFiles/SelectionAnalyses/BUSTED.bf"
 
 rule all:
   input:
@@ -42,7 +47,7 @@ rule all:
 # ~~ some proteins are not in frame... ~~ might want to pre-process 
 # this data to get rid of these first 
 ####################################################################
-rule rpf_pre:
+rule pre_mafft:
   input:
     in_f = "data/fasta/{vir_seq}.fasta"
   output:
@@ -57,9 +62,9 @@ rule rpf_pre:
 #
 # add a separate dir to send these files
 ####################################################################
-rule mafft_rpf:
+rule mafft_align:
   input:
-    in_prot = rules.rpf_pre.output.out_prot
+    in_prot = rules.pre_mafft.output.out_prot
   output:
     out_prot = "data/fasta/{vir_seq}.fasta_protein_aligned.fas"
   shell:
@@ -69,10 +74,10 @@ rule mafft_rpf:
 # This rule will read in aligned PROTEIN file
 # and run it through post-bf
 ####################################################################
-rule rpf_post:
+rule post_mafft:
   input:
-    in_prot = rules.mafft_rpf.output.out_prot,
-    in_nuc = rules.rpf_pre.output.out_nuc
+    in_prot = rules.mafft_align.output.out_prot,
+    in_nuc = rules.pre_mafft.output.out_nuc
   output:
     out_f = "data/fasta/{vir_seq}.fasta_protein_aligned.fas.hyphy.fas"
   shell:
@@ -82,13 +87,103 @@ rule rpf_post:
 # This rule will read in the post-hyphy fasta 
 # and run it through ~ GARD ~
 ####################################################################
-rule rpf_GARD:
+rule hyphy_GARD:
   input:
-    in_f = rules.rpf_post.output.out_f
+    in_f = rules.post_mafft.output.out_f
   output:
-    out_j = str(rules.rpf_post.output.out_f) + ".GARD.json",
-    out_nex = str(rules.rpf_post.output.out_f) + ".best-gard"
+    out_j = str(rules.post_mafft.output.out_f) + ".GARD.json",
+    out_nex = str(rules.post_mafft.output.out_f) + ".best-gard"
   shell:
-   "hyphy {GARD} --alignment {input.in_f}"
+    "hyphy {GARD} --alignment {input.in_f}"
+ 
+########################################################################
+# This rule will read in the post-GARD .best-gard file 
+# if file is empty it will build a tree, otherwise it will use the file
+########################################################################
+rule tree_maker:
+  input:
+    in_nex = rules.hyphy_GARD.output.out_nex,
+    in_aligned = rules.post_mafft.output.out_f
+  output:
+    out_nex = str(rules.hyphy_GARD.output.out_nex) + ".nex", 
+    out_tmp = str(rules.hyphy_GARD.output.out_nex) + ".tmp" 
+  run:
+    if not os.stat(input.in_nex).st_size == 0:
+      shell("mv {input.in_nex} {output.out_nex}")
+    else:
+      # build a tree then make a nexus
+      shell("fasttree < {input.in_aligned} > {output.out_tmp}")
+      shell("cat {input.in_aligned} {output.out_tmp} > {output.out_nex}")
 
+#####################################################################
+# This rule will read in the output of tree_maker 
+# and run it through ~ MEME ~
+####################################################################
+rule hyphy_MEME:
+  input:
+    in_nex = rules.tree_maker.output.out_nex
+  output:
+    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+  shell:
+    "hyphy {MEME} --alignment {input.in_nex}" 
+
+###################################################################
+# This rule will read in the output of tree_maker 
+# and run it through ~ FEL ~
+####################################################################
+rule hyphy_FEL:
+  input:
+    in_nex = rules.tree_maker.output.out_nex
+  output:
+    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+  shell:
+    "hyphy {FEL} --alignment {input.in_nex}" 
+
+####################################################################
+# This rule will read in the output of GARD 
+# and run it through ~ SLAC ~
+####################################################################
+rule hyphy_SLAC:
+  input:
+    in_nex = rules.tree_maker.output.out_nex
+  output:
+    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+  shell:
+    "hyphy {SLAC} --alignment {input.in_nex}" 
+
+####################################################################
+# This rule will read in the output of GARD 
+# and run it through ~ BUSTED ~
+####################################################################
+rule hyphy_BUSTER:
+  input:
+    in_nex = rules.tree_maker.output.out_nex
+  output:
+    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+  shell:
+    "hyphy {BUSTED} --alignment {input.in_nex}" 
+
+####################################################################
+# This rule will read in the output of GARD 
+# and run it through ~ FUBAR ~
+####################################################################
+rule hyphy_FUBAR:
+  input:
+    in_nex = rules.tree_maker.output.out_nex
+  output:
+    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+  shell:
+    "hyphy {FUBAR} --alignment {input.in_nex}" 
+
+####################################################################
+# This rule will read in the output of GARD 
+# and run it through ~ FMM ~
+####################################################################
+rule hyphy_FMM:
+  input:
+    in_nex = rules.tree_maker.output.out_nex
+  output:
+    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+  shell:
+    "hyphy {FMM} --alignment {input.in_nex}" 
 

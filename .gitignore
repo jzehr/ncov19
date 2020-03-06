@@ -1,5 +1,7 @@
 .snakemake/*
 
+snakejob*
+
 mafft*
 
 errors*

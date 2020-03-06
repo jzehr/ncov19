@@ -35,6 +35,13 @@ python python/SARS_MERS.py -e gmail@gmail.com -v SARS
 
 ## Step 4: Run the pipeline with snakemake
 ### This is where things get fun
+```
+bpsh 2 snakemake all -j 200
+
+(not this way yet)
+snakemake --cluster 'qsub -l nodes=1:ppn20' -j 200 -k all
+```
+
 -- If you want to ask about the recombination of the S protein in SARS
 ```
 snakemake data/fasta/SARS_S.fasta_protein_aligned.fas.hyphy.fas.GARD.json
