@@ -123,7 +123,7 @@ rule hyphy_MEME:
   input:
     in_nex = rules.tree_maker.output.out_nex
   output:
-    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+    out_j = str(rules.tree_maker.output.out_nex) + ".MEME.json"
   shell:
     "hyphy {MEME} --alignment {input.in_nex}" 
 
@@ -135,7 +135,7 @@ rule hyphy_FEL:
   input:
     in_nex = rules.tree_maker.output.out_nex
   output:
-    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+    out_j = str(rules.tree_maker.output.out_nex) + ".FEL.json"
   shell:
     "hyphy {FEL} --alignment {input.in_nex}" 
 
@@ -147,7 +147,7 @@ rule hyphy_SLAC:
   input:
     in_nex = rules.tree_maker.output.out_nex
   output:
-    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+    out_j = str(rules.tree_maker.output.out_nex) + ".SLAC.json"
   shell:
     "hyphy {SLAC} --alignment {input.in_nex}" 
 
@@ -155,11 +155,11 @@ rule hyphy_SLAC:
 # This rule will read in the output of GARD 
 # and run it through ~ BUSTED ~
 ####################################################################
-rule hyphy_BUSTER:
+rule hyphy_BUSTED:
   input:
     in_nex = rules.tree_maker.output.out_nex
   output:
-    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+    out_j = str(rules.tree_maker.output.out_nex) + ".BUSTED.json"
   shell:
     "hyphy {BUSTED} --alignment {input.in_nex}" 
 
@@ -171,7 +171,7 @@ rule hyphy_FUBAR:
   input:
     in_nex = rules.tree_maker.output.out_nex
   output:
-    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+    out_j = str(rules.tree_maker.output.out_nex) + ".FUBAR.json"
   shell:
     "hyphy {FUBAR} --alignment {input.in_nex}" 
 
@@ -183,7 +183,27 @@ rule hyphy_FMM:
   input:
     in_nex = rules.tree_maker.output.out_nex
   output:
-    out_j = str(rules.post_mafft.output.out_f) + ".MEME.json"
+    out_j = str(rules.tree_maker.output.out_nex) + ".FITTER.json"
   shell:
     "hyphy {FMM} --alignment {input.in_nex}" 
+
+#################################################
+# This rule will read in ALL selection analyses 
+# and output master selection json
+#################################################
+rule all_selection:
+  input:
+    in_GARD = rules.hyphy_GARD.output.out_j,
+    in_FMM = rules.hyphy_FMM.output.out_j,
+    in_MEME = rules.hyphy_MEME.output.out_j,
+    in_FUBAR = rules.hyphy_FUBAR.output.out_j,
+    in_FEL = rules.hyphy_FEL.output.out_j,
+    in_BUSTED = rules.hyphy_BUSTED.output.out_j,
+    in_SLAC = rules.hyphy_SLAC.output.out_j
+  output:
+    out_j = str(rules.post_mafft.output.out_f) + ".ALL.json"
+  shell:
+    "cat {input.in_GARD} {input.in_FMM} {input.in_MEME} {input.in_FUBAR} {input.in_FEL} {input.in_BUSTED} {input.in_SLAC} > {output.out_j}" 
+
+
 
