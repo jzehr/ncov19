@@ -81,7 +81,7 @@ rule post_mafft:
   output:
     out_f = "data/fasta/{vir_seq}.fasta_protein_aligned.fas.hyphy.fas"
   shell:
-   "hyphy {POST} --protein-msa {input.in_prot} --nucleotide-sequences {input.in_nuc} --output {output.out_f} --compress No"
+   "hyphy {POST} --protein-msa {input.in_prot} --nucleotide-sequences {input.in_nuc} --output {output.out_f} --compress Yes"
 
 ####################################################################
 # This rule will read in the post-hyphy fasta 
