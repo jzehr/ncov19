@@ -54,7 +54,7 @@ rule pre_mafft:
     out_prot = "data/fasta/{vir_seq}.fasta_protein.fas",
     out_nuc = "data/fasta/{vir_seq}.fasta_nuc.fas"
   shell:
-   "hyphy {PRE} --input {input.in_f} --E 0.05"
+   "hyphy {PRE} --input {input.in_f} --E 0.001"
 
 ####################################################################
 # This rule will read protein fas from previous rule and
@@ -142,7 +142,7 @@ rule hyphy_FEL:
     "hyphy {FEL} --alignment {input.in_nex}" 
 
 ####################################################################
-# This rule will read in the output of GARD 
+# This rule will read in the output of tree_maker 
 # and run it through ~ SLAC ~
 ####################################################################
 rule hyphy_SLAC:
@@ -154,7 +154,7 @@ rule hyphy_SLAC:
     "hyphy {SLAC} --alignment {input.in_nex}" 
 
 ####################################################################
-# This rule will read in the output of GARD 
+# This rule will read in the output of tree_maker 
 # and run it through ~ BUSTED ~
 ####################################################################
 rule hyphy_BUSTED:
@@ -166,7 +166,7 @@ rule hyphy_BUSTED:
     "hyphy {BUSTED} --alignment {input.in_nex}" 
 
 ####################################################################
-# This rule will read in the output of GARD 
+# This rule will read in the output of tree_maker 
 # and run it through ~ FUBAR ~
 ####################################################################
 rule hyphy_FUBAR:
@@ -178,7 +178,7 @@ rule hyphy_FUBAR:
     "hyphy {FUBAR} --alignment {input.in_nex}" 
 
 ####################################################################
-# This rule will read in the output of GARD 
+# This rule will read in the output of tree_maker 
 # and run it through ~ FMM ~
 ####################################################################
 rule hyphy_FMM:
