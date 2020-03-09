@@ -106,14 +106,14 @@ rule tree_maker:
     in_aligned = rules.post_mafft.output.out_f
   output:
     out_nex = str(rules.hyphy_GARD.output.out_nex) + ".nex", 
-    out_tmp = str(rules.hyphy_GARD.output.out_nex) + ".tmp" 
+    #out_tmp = str(rules.hyphy_GARD.output.out_nex) + ".tmp" 
   run:
     if not os.stat(input.in_nex).st_size == 0:
       shell("mv {input.in_nex} {output.out_nex}")
-    else:
-      # build a tree then make a nexus
-      shell("fasttree < {input.in_aligned} > {output.out_tmp}")
-      shell("cat {input.in_aligned} {output.out_tmp} > {output.out_nex}")
+    #else:
+    #  # build a tree then make a nexus
+    #  shell("fasttree < {input.in_aligned} > {output.out_tmp}")
+    #  shell("cat {input.in_aligned} {output.out_tmp} > {output.out_nex}")
 
 #####################################################################
 # This rule will read in the output of tree_maker 
@@ -124,6 +124,8 @@ rule hyphy_MEME:
     in_nex = rules.tree_maker.output.out_nex
   output:
     out_j = str(rules.tree_maker.output.out_nex) + ".MEME.json"
+  #run:
+  #  import pdb;pdb.set_trace()
   shell:
     "hyphy {MEME} --alignment {input.in_nex}" 
 
@@ -201,7 +203,7 @@ rule all_selection:
     in_BUSTED = rules.hyphy_BUSTED.output.out_j,
     in_SLAC = rules.hyphy_SLAC.output.out_j
   output:
-    out_j = str(rules.post_mafft.output.out_f) + ".ALL.json"
+    out_j = str(rules.tree_maker.output.out_nex) + ".ALL.json"
   shell:
     "cat {input.in_GARD} {input.in_FMM} {input.in_MEME} {input.in_FUBAR} {input.in_FEL} {input.in_BUSTED} {input.in_SLAC} > {output.out_j}" 
 
