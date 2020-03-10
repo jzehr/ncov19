@@ -1,3 +1,10 @@
+```
+After you run the pipeline you need to get a gene file from COVID19 (the google drive) to cat with SARS and MERS gene file
+then snakemake will run properly. You can also just run the python scripts and analyze any SARS and or MERS genes separately.
+```
+
+
+
 REQUIREMENTS:
 python 3 or higher
 Anaconda3
