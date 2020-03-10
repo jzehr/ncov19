@@ -94,7 +94,7 @@ rule hyphy_GARD:
     out_j = str(rules.post_mafft.output.out_f) + ".GARD.json",
     out_nex = str(rules.post_mafft.output.out_f) + ".best-gard"
   shell:
-    "hyphy {GARD} --alignment {input.in_f}"
+    "mpirun -np 32 HYPHYMPI {GARD} --alignment {input.in_f}"
  
 ########################################################################
 # This rule will read in the post-GARD .best-gard file 
@@ -106,14 +106,15 @@ rule tree_maker:
     in_aligned = rules.post_mafft.output.out_f
   output:
     out_nex = str(rules.hyphy_GARD.output.out_nex) + ".nex", 
-    #out_tmp = str(rules.hyphy_GARD.output.out_nex) + ".tmp" 
+    out_tmp = str(rules.hyphy_GARD.output.out_nex) + ".tmp" 
   run:
     if not os.stat(input.in_nex).st_size == 0:
       shell("mv {input.in_nex} {output.out_nex}")
-    #else:
-    #  # build a tree then make a nexus
-    #  shell("fasttree < {input.in_aligned} > {output.out_tmp}")
-    #  shell("cat {input.in_aligned} {output.out_tmp} > {output.out_nex}")
+      shell("touch {output.out_tmp}")
+    else:
+      # build a tree then make a nexus
+      shell("fasttree < {input.in_aligned} > {output.out_tmp}")
+      shell("cat {input.in_aligned} {output.out_tmp} > {output.out_nex}")
 
 #####################################################################
 # This rule will read in the output of tree_maker 
@@ -124,10 +125,8 @@ rule hyphy_MEME:
     in_nex = rules.tree_maker.output.out_nex
   output:
     out_j = str(rules.tree_maker.output.out_nex) + ".MEME.json"
-  #run:
-  #  import pdb;pdb.set_trace()
   shell:
-    "hyphy {MEME} --alignment {input.in_nex}" 
+    "mpirun -np 32 HYPHYMPI {MEME} --alignment {input.in_nex}" 
 
 ###################################################################
 # This rule will read in the output of tree_maker 
@@ -139,7 +138,7 @@ rule hyphy_FEL:
   output:
     out_j = str(rules.tree_maker.output.out_nex) + ".FEL.json"
   shell:
-    "hyphy {FEL} --alignment {input.in_nex}" 
+    "mpirun -np 32 HYPHYMPI {FEL} --alignment {input.in_nex}" 
 
 ####################################################################
 # This rule will read in the output of tree_maker 
@@ -151,7 +150,7 @@ rule hyphy_SLAC:
   output:
     out_j = str(rules.tree_maker.output.out_nex) + ".SLAC.json"
   shell:
-    "hyphy {SLAC} --alignment {input.in_nex}" 
+    "mpirun -np 32 HYPHYMPI {SLAC} --alignment {input.in_nex}" 
 
 ####################################################################
 # This rule will read in the output of tree_maker 
@@ -163,7 +162,7 @@ rule hyphy_BUSTED:
   output:
     out_j = str(rules.tree_maker.output.out_nex) + ".BUSTED.json"
   shell:
-    "hyphy {BUSTED} --alignment {input.in_nex}" 
+    "mpirun -np 32 HYPHYMPI {BUSTED} --alignment {input.in_nex}" 
 
 ####################################################################
 # This rule will read in the output of tree_maker 
@@ -175,7 +174,7 @@ rule hyphy_FUBAR:
   output:
     out_j = str(rules.tree_maker.output.out_nex) + ".FUBAR.json"
   shell:
-    "hyphy {FUBAR} --alignment {input.in_nex}" 
+    "mpirun -np 32 HYPHYMPI {FUBAR} --alignment {input.in_nex}" 
 
 ####################################################################
 # This rule will read in the output of tree_maker 
@@ -187,7 +186,7 @@ rule hyphy_FMM:
   output:
     out_j = str(rules.tree_maker.output.out_nex) + ".FITTER.json"
   shell:
-    "hyphy {FMM} --alignment {input.in_nex}" 
+    "mpirun -np 32 HYPHYMPI {FMM} --alignment {input.in_nex}" 
 
 #################################################
 # This rule will read in ALL selection analyses 

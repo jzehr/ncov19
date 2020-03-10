@@ -36,21 +36,12 @@ python python/SARS_MERS.py -e gmail@gmail.com -v SARS
 ## Step 4: Run the pipeline with snakemake
 ### This is where things get fun
 ```
-bpsh 2 snakemake all -j 200
+bpsh 3 snakemake data/fasta/MERS_SARS_COVID19_S.fasta_protein_aligned.fas.hyphy.fas.best-gard.nex.ALL.json -j 200
 
-(not this way yet)
-snakemake --cluster 'qsub -l nodes=1:ppn20' -j 200 -k all
-```
+(or one particular analysis)
 
--- If you want to ask about the recombination of the S protein in SARS
+bpsh 3 snakemake data/fasta/MERS_SARS_COVID19_S.fasta_protein_aligned.fas.hyphy.fas.best-gard.nex.MEME.json -j 200
 ```
-snakemake data/fasta/SARS_S.fasta_protein_aligned.fas.hyphy.fas.GARD.json
-```
--- If you want to ask about the selection (using MEME) of the S protein in SARS
-```
-snakemake data/fasta/SARS_S.fasta_protein_aligned.fas.hyphy.fas.MEME.json
-```
-Can run this locally:
 
 -- you can use a ```-j``` flag to denote the number of cores to run on.
 
